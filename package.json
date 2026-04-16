@@ -17,9 +17,16 @@
       "prettier --write"
     ]
   },
+  "commitlint": {
+    "extends": [
+      "@commitlint/config-conventional"
+    ],
+    "formatter": "./commitlint-formatter.js"
+  },
   "devDependencies": {
     "@commitlint/cli": "^20.5.0",
     "@commitlint/config-conventional": "^20.5.0",
+    "@commitlint/format": "^20.5.0",
     "@eslint/js": "^10.0.1",
     "eslint": "^10.2.0",
     "git-commit-msg-linter": "^5.0.8",
