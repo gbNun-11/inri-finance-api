@@ -1,13 +1,13 @@
 import { Router } from 'express'
-// Import the Factory Folder
+// import { makeGetUserController } from '../factories/user.js'
 
 const router = Router()
-// Factory Const
+// const userController = makeGetUserController()
 
 router.get()
 router.get()
-router.patch()
 router.post()
+router.patch()
 router.delete()
 
 export default router
