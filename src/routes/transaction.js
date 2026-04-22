@@ -1,13 +1,16 @@
 import { Router } from 'express'
-// Import the Factory Folder
+import { makeGetTransactionController } from '../factories/transaction.js'
 
-const router = Router()
-// Factory Const
+const router = new Router()
+const transactionController = makeGetTransactionController()
 
-router.get()
-router.get()
-router.patch()
-router.post()
-router.delete()
+router.get('/', (req, res) => transactionController.show(req, res))
+router.patch('/:transactionId', (req, res) =>
+  transactionController.update(req, res),
+)
+router.delete('/:transactionId', (req, res) =>
+  transactionController.delete(req, res),
+)
+router.post('/', (req, res) => transactionController.store(req, res))
 
 export default router

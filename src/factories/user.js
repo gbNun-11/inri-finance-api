@@ -1,20 +1,63 @@
-// Repository Factory
-import { CreateUserRepository } from '../repositories/postgres/index.js'
-
-// Use-Case Factory
-import { CreateUserUseCase } from '../use-cases/index.js'
-
-// Helper Factory
-// Controller Factory
+// Repository Factories
+import {
+  PostgresCreateUserRepository,
+  PostgresDeleteUserRepository,
+  PostgresUpdateUserRepository,
+  PostgresGetUserByEmailReposity,
+  PostgresGetUserByIdRepository,
+  PostgresGetUserBalanceRepository,
+} from '../repositories/postgres/index.js'
+// Use-Cases Factories
+import {
+  GetUserByIdUseCase,
+  CreateUserUseCase,
+  DeleteUserUseCase,
+  UpdateUserUseCase,
+  GetUserBalanceUseCase,
+} from '../use-cases/index.js'
+// Helpers Factories
+import { GetUserHelper } from '../helpers/http.js'
+// Controllers Factories
 import { UserController } from '../controllers/UserController.js'
 
 export const makeGetUserController = () => {
-  // Repositories
-  const createUserRespository = new CreateUserRepository()
+  // Repositorys
+  const postgresGetUserByIdRepository = new PostgresGetUserByIdRepository()
+  const postgresGetUserByEmailReposity = new PostgresGetUserByEmailReposity()
+  const postgresUpdateUserRepository = new PostgresUpdateUserRepository()
+  const postgresDeleteUserRepository = new PostgresDeleteUserRepository()
+  const postgresCreateUserRepository = new PostgresCreateUserRepository()
+  const postgresGetUserBalanceRepository =
+    new PostgresGetUserBalanceRepository()
+
   // Use-Cases
-  const createUserUseCase = new CreateUserUseCase(createUserRespository)
-  // Controller
-  const userController = new UserController(createUserUseCase)
+  const getUserByIdUseCase = new GetUserByIdUseCase(
+    postgresGetUserByIdRepository,
+  )
+  const updateUserUseCase = new UpdateUserUseCase(
+    postgresGetUserByEmailReposity,
+    postgresUpdateUserRepository,
+  )
+  const deleteUserUseCase = new DeleteUserUseCase(postgresDeleteUserRepository)
+  const createUserUseCase = new CreateUserUseCase(
+    postgresGetUserByEmailReposity,
+    postgresCreateUserRepository,
+  )
+  const getUserBalanceUseCase = new GetUserBalanceUseCase(
+    postgresGetUserBalanceRepository,
+  )
+
+  // Helpers
+  const getUserHelper = new GetUserHelper(getUserByIdUseCase)
+
+  // Controllers
+  const userController = new UserController(
+    getUserHelper,
+    updateUserUseCase,
+    createUserUseCase,
+    deleteUserUseCase,
+    getUserBalanceUseCase,
+  )
 
   return userController
 }

@@ -1,13 +1,14 @@
 import { Router } from 'express'
-// import { makeGetUserController } from '../factories/user.js'
+import { makeGetUserController } from '../factories/user.js'
 
-const router = Router()
-// const userController = makeGetUserController()
+const router = new Router()
+const userController = makeGetUserController()
 
-router.get()
-router.get()
-router.post()
-router.patch()
-router.delete()
+// Routes
+router.get('/:userId', (req, res) => userController.show(req, res))
+router.get('/:userId/balance', (req, res) => userController.index(req, res))
+router.patch('/:userId', (req, res) => userController.update(req, res))
+router.delete('/:userId', (req, res) => userController.delete(req, res))
+router.post('/', (req, res) => userController.store(req, res))
 
 export default router
