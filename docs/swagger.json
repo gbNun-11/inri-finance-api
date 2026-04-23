@@ -1,0 +1,8 @@
+{
+  "openapi": "3.0.0",
+  "info": {
+    "title": "INRI Finance API",
+    "description": "API for INRI Finance documentation",
+    "version": "1.0.0"
+  }
+}
