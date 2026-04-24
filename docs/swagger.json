@@ -7,7 +7,7 @@
   },
   "servers": [
     {
-      "url": "http://localhost:3000/api",
+      "url": "http://localhost:8030/api",
       "description": "Local server"
     }
   ],
@@ -38,13 +38,78 @@
             }
           },
           "400": {
-            "description": "Invalid request"
+            "description": "Invalid user creation data",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                },
+                "examples": {
+                  "missingFirstName": {
+                    "summary": "Missing first name",
+                    "value": {
+                      "errorMessage": "Missing param: first_name"
+                    }
+                  },
+                  "missingLastName": {
+                    "summary": "Missing last name",
+                    "value": {
+                      "errorMessage": "Missing param: last_name"
+                    }
+                  },
+                  "missingEmail": {
+                    "summary": "Missing e-mail",
+                    "value": {
+                      "errorMessage": "Missing param: email"
+                    }
+                  },
+                  "invalidEmail": {
+                    "summary": "Invalid e-mail",
+                    "value": {
+                      "errorMessage": "Invalid e-mail. Please provide a valid one"
+                    }
+                  },
+                  "missingPassword": {
+                    "summary": "Missing password",
+                    "value": {
+                      "errorMessage": "Missing param: password"
+                    }
+                  },
+                  "shortPassword": {
+                    "summary": "Short password",
+                    "value": {
+                      "errorMessage": "Password must be at least 6 characters"
+                    }
+                  }
+                }
+              }
+            }
           },
           "409": {
-            "description": "Email already exists"
+            "description": "E-mail already in use",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                },
+                "example": {
+                  "errorMessage": "The e-mail john.doe@example.com is already in use"
+                }
+              }
+            }
           },
           "500": {
-            "description": "Internal server error"
+            "description": "Internal server error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                },
+                "example": {
+                  "errorMessage": "Internal server error"
+                }
+              }
+            }
           }
         }
       }
@@ -76,11 +141,134 @@
               }
             }
           },
+          "400": {
+            "description": "Invalid user ID",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                },
+                "examples": {
+                  "missingUserId": {
+                    "summary": "Missing user ID",
+                    "value": {
+                      "errorMessage": "User ID is required"
+                    }
+                  },
+                  "invalidUserId": {
+                    "summary": "Invalid user ID",
+                    "value": {
+                      "errorMessage": "User ID is not valid"
+                    }
+                  }
+                }
+              }
+            }
+          },
           "404": {
-            "description": "User not found"
+            "description": "User not found",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                },
+                "example": {
+                  "errorMessage": "User not found."
+                }
+              }
+            }
           },
           "500": {
-            "description": "Internal server error"
+            "description": "Internal server error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                },
+                "example": {
+                  "errorMessage": "Internal server error"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/users/{userId}/balance": {
+      "get": {
+        "summary": "Get user balance",
+        "tags": ["Users"],
+        "parameters": [
+          {
+            "name": "userId",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "uuid"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "User balance found successfully",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/UserBalance"
+                },
+                "example": {
+                  "userId": "2e4d4d19-67e8-479a-b109-994bf5433d26",
+                  "earning": "3900.00",
+                  "expense": "1200.00",
+                  "investment": "1500.00",
+                  "balance": "1200.00"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Invalid user ID",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                },
+                "examples": {
+                  "invalidUserId": {
+                    "value": {
+                      "errorMessage": "User ID is not valid"
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "User not found",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                },
+                "example": {
+                  "errorMessage": "User not found."
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "Internal server error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                },
+                "example": {
+                  "errorMessage": "Internal server error"
+                }
+              }
+            }
           }
         }
       }
@@ -111,13 +299,96 @@
             }
           },
           "400": {
-            "description": "Invalid request"
+            "description": "Invalid transaction creation data",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                },
+                "examples": {
+                  "missingUserId": {
+                    "summary": "Missing user ID",
+                    "value": {
+                      "errorMessage": "Missing param: user_id"
+                    }
+                  },
+                  "invalidUserId": {
+                    "summary": "Invalid user ID",
+                    "value": {
+                      "errorMessage": "User ID is not valid"
+                    }
+                  },
+                  "missingName": {
+                    "summary": "Missing name",
+                    "value": {
+                      "errorMessage": "Missing param: name"
+                    }
+                  },
+                  "missingDate": {
+                    "summary": "Missing date",
+                    "value": {
+                      "errorMessage": "Missing param: date"
+                    }
+                  },
+                  "missingAmount": {
+                    "summary": "Missing amount",
+                    "value": {
+                      "errorMessage": "Missing param: amount"
+                    }
+                  },
+                  "invalidAmountType": {
+                    "summary": "Invalid amount type",
+                    "value": {
+                      "errorMessage": "The type amount must be number."
+                    }
+                  },
+                  "invalidAmount": {
+                    "summary": "Invalid amount",
+                    "value": {
+                      "errorMessage": "The amount must be greater than 0."
+                    }
+                  },
+                  "missingType": {
+                    "summary": "Missing type",
+                    "value": {
+                      "errorMessage": "Missing param: type"
+                    }
+                  },
+                  "invalidType": {
+                    "summary": "Invalid transaction type",
+                    "value": {
+                      "errorMessage": "The type must be EARNING, EXPENSE or INVESTMENT"
+                    }
+                  }
+                }
+              }
+            }
           },
           "404": {
-            "description": "User not found"
+            "description": "User not found",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                },
+                "example": {
+                  "errorMessage": "User not found."
+                }
+              }
+            }
           },
           "500": {
-            "description": "Internal server error"
+            "description": "Internal server error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                },
+                "example": {
+                  "errorMessage": "Internal server error"
+                }
+              }
+            }
           }
         }
       }
@@ -152,11 +423,55 @@
               }
             }
           },
+          "400": {
+            "description": "Invalid user ID",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                },
+                "examples": {
+                  "missingUserId": {
+                    "summary": "Missing user ID",
+                    "value": {
+                      "errorMessage": "User ID is required"
+                    }
+                  },
+                  "invalidUserId": {
+                    "summary": "Invalid user ID",
+                    "value": {
+                      "errorMessage": "User ID is not valid"
+                    }
+                  }
+                }
+              }
+            }
+          },
           "404": {
-            "description": "Transactions not found"
+            "description": "Transactions not found",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                },
+                "example": {
+                  "errorMessage": "Transactions not found"
+                }
+              }
+            }
           },
           "500": {
-            "description": "Internal server error"
+            "description": "Internal server error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                },
+                "example": {
+                  "errorMessage": "Internal server error"
+                }
+              }
+            }
           }
         }
       },
@@ -197,13 +512,78 @@
             }
           },
           "400": {
-            "description": "Invalid request"
+            "description": "Invalid transaction update data",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                },
+                "examples": {
+                  "missingTransactionId": {
+                    "summary": "Missing transaction ID",
+                    "value": {
+                      "errorMessage": "Transaction ID is required"
+                    }
+                  },
+                  "invalidTransactionId": {
+                    "summary": "Invalid transaction ID",
+                    "value": {
+                      "errorMessage": "Transaction ID is not valid"
+                    }
+                  },
+                  "emptyUpdateBody": {
+                    "summary": "Empty update body",
+                    "value": {
+                      "errorMessage": "At least one field must be provided to update the transaction"
+                    }
+                  },
+                  "invalidAmountType": {
+                    "summary": "Invalid amount type",
+                    "value": {
+                      "errorMessage": "The type amount must be number."
+                    }
+                  },
+                  "invalidAmount": {
+                    "summary": "Invalid amount",
+                    "value": {
+                      "errorMessage": "The amount must be greater than 0."
+                    }
+                  },
+                  "invalidType": {
+                    "summary": "Invalid transaction type",
+                    "value": {
+                      "errorMessage": "The type must be EARNING, EXPENSE or INVESTMENT"
+                    }
+                  }
+                }
+              }
+            }
           },
           "404": {
-            "description": "Transaction not found"
+            "description": "Transaction not found",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                },
+                "example": {
+                  "errorMessage": "Transaction not found."
+                }
+              }
+            }
           },
           "500": {
-            "description": "Internal server error"
+            "description": "Internal server error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                },
+                "example": {
+                  "errorMessage": "Internal server error"
+                }
+              }
+            }
           }
         }
       },
@@ -226,11 +606,55 @@
           "204": {
             "description": "Transaction deleted successfully"
           },
+          "400": {
+            "description": "Invalid transaction ID",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                },
+                "examples": {
+                  "missingTransactionId": {
+                    "summary": "Missing transaction ID",
+                    "value": {
+                      "errorMessage": "Transaction ID is required"
+                    }
+                  },
+                  "invalidTransactionId": {
+                    "summary": "Invalid transaction ID",
+                    "value": {
+                      "errorMessage": "Transaction ID is not valid"
+                    }
+                  }
+                }
+              }
+            }
+          },
           "404": {
-            "description": "Transaction not found"
+            "description": "Transaction not found",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                },
+                "example": {
+                  "errorMessage": "Transaction not found."
+                }
+              }
+            }
           },
           "500": {
-            "description": "Internal server error"
+            "description": "Internal server error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                },
+                "example": {
+                  "errorMessage": "Internal server error"
+                }
+              }
+            }
           }
         }
       }
@@ -240,13 +664,13 @@
     "schemas": {
       "CreateUserRequest": {
         "type": "object",
-        "required": ["firstName", "lastName", "email", "password"],
+        "required": ["first_name", "last_name", "email", "password"],
         "properties": {
-          "firstName": {
+          "first_name": {
             "type": "string",
             "example": "John"
           },
-          "lastName": {
+          "last_name": {
             "type": "string",
             "example": "Doe"
           },
@@ -270,11 +694,11 @@
             "format": "uuid",
             "example": "74f0e35a-68d0-4493-a901-1ec03517cd6a"
           },
-          "firstName": {
+          "first_name": {
             "type": "string",
             "example": "John"
           },
-          "lastName": {
+          "last_name": {
             "type": "string",
             "example": "Doe"
           },
@@ -285,11 +709,36 @@
           }
         }
       },
-      "CreateTransactionRequest": {
+      "UserBalance": {
         "type": "object",
-        "required": ["userId", "name", "transactionDate", "amount", "type"],
         "properties": {
           "userId": {
+            "type": "string",
+            "format": "uuid"
+          },
+          "earning": {
+            "type": "string",
+            "example": "3900.00"
+          },
+          "expense": {
+            "type": "string",
+            "example": "1200.00"
+          },
+          "investment": {
+            "type": "string",
+            "example": "1500.00"
+          },
+          "balance": {
+            "type": "string",
+            "example": "1200.00"
+          }
+        }
+      },
+      "CreateTransactionRequest": {
+        "type": "object",
+        "required": ["user_id", "name", "date", "amount", "type"],
+        "properties": {
+          "user_id": {
             "type": "string",
             "format": "uuid",
             "example": "74f0e35a-68d0-4493-a901-1ec03517cd6a"
@@ -298,7 +747,7 @@
             "type": "string",
             "example": "Salary"
           },
-          "transactionDate": {
+          "date": {
             "type": "string",
             "format": "date",
             "example": "2026-04-24"
@@ -322,7 +771,7 @@
             "type": "string",
             "example": "Updated transaction name"
           },
-          "transactionDate": {
+          "date": {
             "type": "string",
             "format": "date",
             "example": "2026-04-24"
@@ -347,7 +796,7 @@
             "format": "uuid",
             "example": "ecf6e6c2-13dc-4e84-85a4-4c93b0e0802a"
           },
-          "userId": {
+          "user_id": {
             "type": "string",
             "format": "uuid",
             "example": "74f0e35a-68d0-4493-a901-1ec03517cd6a"
@@ -356,7 +805,7 @@
             "type": "string",
             "example": "Salary"
           },
-          "transactionDate": {
+          "date": {
             "type": "string",
             "format": "date",
             "example": "2026-04-24"
@@ -370,6 +819,15 @@
             "type": "string",
             "enum": ["EARNING", "EXPENSE", "INVESTMENT"],
             "example": "EARNING"
+          }
+        }
+      },
+      "ErrorResponse": {
+        "type": "object",
+        "properties": {
+          "errorMessage": {
+            "type": "string",
+            "example": "Internal server error"
           }
         }
       }
