@@ -19,7 +19,7 @@ jobs:
         with:
           node-version: '24'
       - name: Install dependencies
-        run: npm ci
+        run: npm ci --include=dev
       - name: ESLint
         run: npm run eslint:check
       - name: Prettier
