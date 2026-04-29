@@ -9,6 +9,7 @@
     "migration:run": "node --env-file=.env.development src/database/postgres/migrations/exec.js",
     "migration:run:prod": "node src/database/postgres/migrations/exec.js",
     "start:dev": "node --env-file=.env.development --watch index.js",
+    "start": "node index.js",
     "eslint:check": "eslint . --ext .js",
     "prettier:check": "prettier --check src"
   },
