@@ -1,20 +1,22 @@
-import { Pool } from 'pg'
 import 'dotenv/config.js'
+import { Pool } from 'pg'
+
+const isProduction = process.env.NODE_ENV === 'production'
 
 export const pool = new Pool({
-  user: process.env.DB_USER,
-  password: process.env.DB_PASSWORD,
-  port: process.env.DB_PORT,
-  database: process.env.DB_NAME,
-  host: process.env.DB_HOST,
+  connectionString: process.env.DATABASE_URL,
+  ssl: isProduction ? { rejectUnauthorized: false } : false,
 })
 
 export const PostgresHelper = {
   query: async (query, params) => {
     const client = await pool.connect()
-    const result = await client.query(query, params)
 
-    await client.release()
-    return result
+    try {
+      const result = await client.query(query, params)
+      return result
+    } finally {
+      client.release()
+    }
   },
 }

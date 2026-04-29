@@ -6,8 +6,9 @@
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
     "prepare": "husky",
-    "migration:run": "node src/database/postgres/migrations/exec.js",
-    "start:dev": "node --watch index.js",
+    "migration:run": "node --env-file=.env.development src/database/postgres/migrations/exec.js",
+    "migration:run:prod": "node --env-file=.env.production src/database/postgres/migrations/exec.js",
+    "start:dev": "node --env-file=.env.development --watch index.js",
     "eslint:check": "eslint . --ext .js",
     "prettier:check": "prettier --check src"
   },
