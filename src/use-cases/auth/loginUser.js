@@ -1,43 +1,42 @@
 import { UserNotFoundError, InvalidPasswordError } from '../../errors/user.js'
 
-import bcrypt from 'bcrypt'
-import jwt from 'jsonwebtoken'
-
 export class LoginUserUseCase {
-  constructor(postgresGetUserByEmailRepository) {
+  constructor(
+    postgresGetUserByEmailRepository,
+    passwordComparatorAdapter,
+    tokenGeneratorAdapter,
+    accessTokenSecret,
+    refreshTokenSecret,
+  ) {
     this.postgresGetUserByEmailRepository = postgresGetUserByEmailRepository
+    this.passwordComparatorAdapter = passwordComparatorAdapter
+    this.tokenGeneratorAdapter = tokenGeneratorAdapter
+    this.accessTokenSecret = accessTokenSecret
+    this.refreshTokenSecret = refreshTokenSecret
   }
 
   async execute(email, password) {
     const user = await this.postgresGetUserByEmailRepository.execute(email)
 
-    if (!user) {
-      throw new UserNotFoundError(email)
-    }
+    if (!user) throw new UserNotFoundError(email)
 
-    const isPasswordValid = await bcrypt.compare(password, user.password)
-
-    if (!isPasswordValid) {
-      throw new InvalidPasswordError()
-    }
-
-    if (
-      !process.env.JWT_ACCESS_TOKEN_SECRET ||
-      !process.env.JWT_REFRESH_TOKEN_SECRET
-    ) {
-      throw new Error('JWT secrets are not configured')
-    }
-
-    const accessToken = jwt.sign(
-      { userId: user.id },
-      process.env.JWT_ACCESS_TOKEN_SECRET,
-      { expiresIn: '15m' },
+    const isPasswordValid = await this.passwordComparatorAdapter.execute(
+      password,
+      user.password,
     )
 
-    const refreshToken = jwt.sign(
+    if (!isPasswordValid) throw new InvalidPasswordError()
+
+    const accessToken = this.tokenGeneratorAdapter.generate(
       { userId: user.id },
-      process.env.JWT_REFRESH_TOKEN_SECRET,
-      { expiresIn: '30d' },
+      this.accessTokenSecret,
+      '15m',
+    )
+
+    const refreshToken = this.tokenGeneratorAdapter.generate(
+      { userId: user.id },
+      this.refreshTokenSecret,
+      '30d',
     )
 
     return {

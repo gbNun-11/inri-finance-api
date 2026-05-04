@@ -7,6 +7,8 @@ import {
   PostgresGetUserByIdRepository,
   PostgresGetUserBalanceRepository,
 } from '../repositories/postgres/index.js'
+// Adapter Factories
+import { PasswordHasherAdapter, UuidAdapter } from '../adapters/index.js'
 // Use-Cases Factories
 import {
   GetUserByIdUseCase,
@@ -31,6 +33,9 @@ export const makeGetUserController = () => {
   const postgresGetUserBalanceRepository =
     new PostgresGetUserBalanceRepository()
 
+  // Adapters
+  const passwordHasherAdapter = new PasswordHasherAdapter()
+  const uuidAdapter = new UuidAdapter()
   // Use-Cases
   const getUserByIdUseCase = new GetUserByIdUseCase(
     postgresGetUserByIdRepository,
@@ -38,11 +43,14 @@ export const makeGetUserController = () => {
   const updateUserUseCase = new UpdateUserUseCase(
     postgresGetUserByEmailRepository,
     postgresUpdateUserRepository,
+    passwordHasherAdapter,
   )
   const deleteUserUseCase = new DeleteUserUseCase(postgresDeleteUserRepository)
   const createUserUseCase = new CreateUserUseCase(
     postgresGetUserByEmailRepository,
     postgresCreateUserRepository,
+    passwordHasherAdapter,
+    uuidAdapter,
   )
   const getUserBalanceUseCase = new GetUserBalanceUseCase(
     postgresGetUserBalanceRepository,

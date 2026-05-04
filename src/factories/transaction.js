@@ -7,6 +7,8 @@ import {
   PostgresGetTransactionByIdRepository,
   PostgresDeleteTransactionRepository,
 } from '../repositories/postgres/index.js'
+// Adapters Factories
+import { UuidAdapter } from '../adapters/index.js'
 // Use-Cases Factories
 import {
   GetUserByIdUseCase,
@@ -35,12 +37,16 @@ export const makeGetTransactionController = () => {
   const postgresDeleteTransactionRepository =
     new PostgresDeleteTransactionRepository()
 
+  // Adapters
+  const uuidAdapter = new UuidAdapter()
+
   // Use-Cases
   const getUserByIdUseCase = new GetUserByIdUseCase(
     postgresGetUserByIdRepository,
   )
   const createTransactionUseCase = new CreateTransactionUseCase(
     postgresCreateTransactionRepository,
+    uuidAdapter,
   )
   const getTransactionByUserIdUseCase = new GetTransactionByUserIdUseCase(
     postgresGetTransactionByUserIdRepository,

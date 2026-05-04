@@ -1,11 +1,16 @@
-import crypto from 'node:crypto'
-import bcrypt from 'bcrypt'
 import { EmailAlreadyInUseError } from '../../errors/user.js'
 
 export class CreateUserUseCase {
-  constructor(postgresGetUserByEmailReposity, postgresCreateUserRepository) {
+  constructor(
+    postgresGetUserByEmailReposity,
+    postgresCreateUserRepository,
+    passwordHasherAdapter,
+    UuidAdapter,
+  ) {
     this.postgresGetUserByEmailRepository = postgresGetUserByEmailReposity
     this.postgresCreateUserRepository = postgresCreateUserRepository
+    this.passwordHasherAdapter = passwordHasherAdapter
+    this.uuidAdapter = UuidAdapter
   }
   async execute(createUserParams) {
     const userWithProvidedEmail =
@@ -17,9 +22,11 @@ export class CreateUserUseCase {
       throw new EmailAlreadyInUseError(createUserParams.email)
     }
 
-    const userID = crypto.randomUUID()
+    const userID = this.uuidAdapter.generate()
 
-    const hashedPassword = await bcrypt.hash(createUserParams.password, 10)
+    const hashedPassword = await this.passwordHasherAdapter.execute(
+      createUserParams.password,
+    )
 
     const user = {
       first_name: createUserParams.first_name,

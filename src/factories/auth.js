@@ -4,6 +4,11 @@ import {
   PostgresGetUserByIdRepository,
   PostgresGetTransactionByIdRepository,
 } from '../repositories/postgres/index.js'
+// Adapters Factories
+import {
+  TokenGeneratorAdapter,
+  PasswordComparatorAdapter,
+} from '../adapters/index.js'
 // Use-Cases Factories
 import {
   LoginUserUseCase,
@@ -23,9 +28,16 @@ export const makeGetAuthController = () => {
   const postgresGetTransactionByIdRepository =
     new PostgresGetTransactionByIdRepository()
 
+  // Adapters
+  const tokenGeneratorAdapter = new TokenGeneratorAdapter()
+  const passwordComparatorAdapter = new PasswordComparatorAdapter()
   // Use-Cases
   const loginUserUseCase = new LoginUserUseCase(
     postgresGetUserByEmailRepository,
+    passwordComparatorAdapter,
+    tokenGeneratorAdapter,
+    process.env.JWT_ACCESS_TOKEN_SECRET,
+    process.env.JWT_REFRESH_TOKEN_SECRET,
   )
   const getUserByIdUseCase = new GetUserByIdUseCase(
     postgresGetUserByIdRepository,

@@ -135,7 +135,7 @@ export class UserController {
       return this.getUserHelper.responseStatusSuccess(res, 201, createdUser)
     } catch (e) {
       if (e instanceof EmailAlreadyInUseError)
-        return this.getUserHelper.responseStatusError(res, 400, e.message)
+        return this.getUserHelper.responseStatusError(res, 409, e.message)
 
       console.error(e)
       return this.getUserHelper.responseStatusError(
