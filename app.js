@@ -4,6 +4,7 @@ import fs from 'fs'
 
 import userRoutes from './src/routes/user.js'
 import transactionRoutes from './src/routes/transaction.js'
+import authRoutes from './src/routes/auth.js'
 
 class App {
   constructor() {
@@ -26,6 +27,7 @@ class App {
   routes() {
     this.app.use('/api/users', userRoutes)
     this.app.use('/api/transactions', transactionRoutes)
+    this.app.use('/api/auth', authRoutes)
     this.app.use(
       '/docs',
       swaggerUi.serve,

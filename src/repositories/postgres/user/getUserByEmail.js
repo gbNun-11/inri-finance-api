@@ -1,6 +1,6 @@
 import { PostgresHelper } from '../../../database/postgres/client.js'
 
-export class PostgresGetUserByEmailReposity {
+export class PostgresGetUserByEmailRepository {
   async execute(userEmail) {
     const user = await PostgresHelper.query(
       'SELECT * FROM users WHERE email = $1',

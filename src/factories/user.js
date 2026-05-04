@@ -3,7 +3,7 @@ import {
   PostgresCreateUserRepository,
   PostgresDeleteUserRepository,
   PostgresUpdateUserRepository,
-  PostgresGetUserByEmailReposity,
+  PostgresGetUserByEmailRepository,
   PostgresGetUserByIdRepository,
   PostgresGetUserBalanceRepository,
 } from '../repositories/postgres/index.js'
@@ -23,7 +23,8 @@ import { UserController } from '../controllers/UserController.js'
 export const makeGetUserController = () => {
   // Repositorys
   const postgresGetUserByIdRepository = new PostgresGetUserByIdRepository()
-  const postgresGetUserByEmailReposity = new PostgresGetUserByEmailReposity()
+  const postgresGetUserByEmailRepository =
+    new PostgresGetUserByEmailRepository()
   const postgresUpdateUserRepository = new PostgresUpdateUserRepository()
   const postgresDeleteUserRepository = new PostgresDeleteUserRepository()
   const postgresCreateUserRepository = new PostgresCreateUserRepository()
@@ -35,18 +36,17 @@ export const makeGetUserController = () => {
     postgresGetUserByIdRepository,
   )
   const updateUserUseCase = new UpdateUserUseCase(
-    postgresGetUserByEmailReposity,
+    postgresGetUserByEmailRepository,
     postgresUpdateUserRepository,
   )
   const deleteUserUseCase = new DeleteUserUseCase(postgresDeleteUserRepository)
   const createUserUseCase = new CreateUserUseCase(
-    postgresGetUserByEmailReposity,
+    postgresGetUserByEmailRepository,
     postgresCreateUserRepository,
   )
   const getUserBalanceUseCase = new GetUserBalanceUseCase(
     postgresGetUserBalanceRepository,
   )
-
   // Helpers
   const getUserHelper = new GetUserHelper(getUserByIdUseCase)
 
