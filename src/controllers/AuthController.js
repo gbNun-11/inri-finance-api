@@ -1,8 +1,13 @@
-import { UserNotFoundError, InvalidPasswordError } from '../errors/user.js'
+import {
+  UserNotFoundError,
+  InvalidPasswordError,
+  UnauthorizedError,
+} from '../errors/user.js'
 
 export class AuthController {
-  constructor(loginUserUseCase, getUserHelper) {
+  constructor(loginUserUseCase, refreshTokenUseCase, getUserHelper) {
     this.loginUserUseCase = loginUserUseCase
+    this.refreshTokenUseCase = refreshTokenUseCase
     this.getUserHelper = getUserHelper
   }
 
@@ -74,5 +79,34 @@ export class AuthController {
     }
 
     return null
+  }
+
+  refreshToken(req, res) {
+    try {
+      const { refreshToken } = req.body
+
+      if (!refreshToken) {
+        return this.getUserHelper.responseStatusError(
+          res,
+          400,
+          'Refresh token is required',
+        )
+      }
+
+      const response = this.refreshTokenUseCase.execute(refreshToken)
+
+      return this.getUserHelper.responseStatusSuccess(res, 200, response)
+    } catch (e) {
+      if (e instanceof UnauthorizedError) {
+        return this.getUserHelper.responseStatusError(res, 401, e.message)
+      }
+
+      console.error(e)
+      return this.getUserHelper.responseStatusError(
+        res,
+        500,
+        'Internal server error.',
+      )
+    }
   }
 }

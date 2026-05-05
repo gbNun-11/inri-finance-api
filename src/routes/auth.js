@@ -6,5 +6,8 @@ const authController = makeGetAuthController()
 
 // Routes
 router.post('/login', (req, res) => authController.handle(req, res))
+router.post('/refresh-token', (req, res) =>
+  authController.refreshToken(req, res),
+)
 
 export default router
