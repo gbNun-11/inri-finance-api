@@ -63,8 +63,8 @@ export const makeGetAuthController = () => {
   // Controllers
   const authController = new AuthController(
     loginUserUseCase,
-    getUserHelper,
     refreshTokenUseCase,
+    getUserHelper,
   )
 
   return authController

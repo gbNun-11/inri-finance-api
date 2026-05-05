@@ -33,7 +33,8 @@ export class RefreshTokenUseCase {
       return {
         accessToken,
       }
-    } catch {
+    } catch (e) {
+      console.error('Refresh token error:', e.name, e.message)
       throw new UnauthorizedError('Invalid refresh token')
     }
   }
