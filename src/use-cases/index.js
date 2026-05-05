@@ -11,3 +11,4 @@ export * from './transaction/getTransactionId.js'
 export * from './transaction/deleteTransaction.js'
 
 export * from './auth/loginUser.js'
+export * from './auth/refreshToken.js'

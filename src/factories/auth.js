@@ -8,12 +8,14 @@ import {
 import {
   TokenGeneratorAdapter,
   PasswordComparatorAdapter,
+  TokenVerifierAdapter,
 } from '../adapters/index.js'
 // Use-Cases Factories
 import {
   LoginUserUseCase,
   GetUserByIdUseCase,
   GetTransactionByIdUseCase,
+  RefreshTokenUseCase,
 } from '../use-cases/index.js'
 // Helpers Factories
 import { GetUserHelper } from '../helpers/http.js'
@@ -31,11 +33,18 @@ export const makeGetAuthController = () => {
   // Adapters
   const tokenGeneratorAdapter = new TokenGeneratorAdapter()
   const passwordComparatorAdapter = new PasswordComparatorAdapter()
+  const tokenVerifierAdapter = new TokenVerifierAdapter()
   // Use-Cases
   const loginUserUseCase = new LoginUserUseCase(
     postgresGetUserByEmailRepository,
     passwordComparatorAdapter,
     tokenGeneratorAdapter,
+    process.env.JWT_ACCESS_TOKEN_SECRET,
+    process.env.JWT_REFRESH_TOKEN_SECRET,
+  )
+  const refreshTokenUseCase = new RefreshTokenUseCase(
+    tokenGeneratorAdapter,
+    tokenVerifierAdapter,
     process.env.JWT_ACCESS_TOKEN_SECRET,
     process.env.JWT_REFRESH_TOKEN_SECRET,
   )
@@ -52,7 +61,11 @@ export const makeGetAuthController = () => {
   )
 
   // Controllers
-  const authController = new AuthController(loginUserUseCase, getUserHelper)
+  const authController = new AuthController(
+    loginUserUseCase,
+    getUserHelper,
+    refreshTokenUseCase,
+  )
 
   return authController
 }
