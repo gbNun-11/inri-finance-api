@@ -2,16 +2,23 @@ import { EmailAlreadyInUseError } from '../../errors/user.js'
 
 export class CreateUserUseCase {
   constructor(
-    postgresGetUserByEmailReposity,
+    postgresGetUserByEmailRepository,
     postgresCreateUserRepository,
     passwordHasherAdapter,
-    UuidAdapter,
+    uuidAdapter,
+    tokenGeneratorAdapter,
+    accessTokenSecret,
+    refreshTokenSecret,
   ) {
-    this.postgresGetUserByEmailRepository = postgresGetUserByEmailReposity
+    this.postgresGetUserByEmailRepository = postgresGetUserByEmailRepository
     this.postgresCreateUserRepository = postgresCreateUserRepository
     this.passwordHasherAdapter = passwordHasherAdapter
-    this.uuidAdapter = UuidAdapter
+    this.uuidAdapter = uuidAdapter
+    this.tokenGeneratorAdapter = tokenGeneratorAdapter
+    this.accessTokenSecret = accessTokenSecret
+    this.refreshTokenSecret = refreshTokenSecret
   }
+
   async execute(createUserParams) {
     const userWithProvidedEmail =
       await this.postgresGetUserByEmailRepository.execute(
@@ -22,22 +29,45 @@ export class CreateUserUseCase {
       throw new EmailAlreadyInUseError(createUserParams.email)
     }
 
-    const userID = this.uuidAdapter.generate()
+    const userId = this.uuidAdapter.generate()
 
     const hashedPassword = await this.passwordHasherAdapter.execute(
       createUserParams.password,
     )
 
     const user = {
+      id: userId,
       first_name: createUserParams.first_name,
       last_name: createUserParams.last_name,
       email: createUserParams.email,
-      id: userID,
       password: hashedPassword,
     }
 
     const createdUser = await this.postgresCreateUserRepository.execute(user)
 
-    return createdUser
+    const accessToken = this.tokenGeneratorAdapter.generate(
+      { userId: createdUser.id },
+      this.accessTokenSecret,
+      '15m',
+    )
+
+    const refreshToken = this.tokenGeneratorAdapter.generate(
+      { userId: createdUser.id },
+      this.refreshTokenSecret,
+      '30d',
+    )
+
+    return {
+      user: {
+        id: createdUser.id,
+        first_name: createdUser.first_name,
+        last_name: createdUser.last_name,
+        email: createdUser.email,
+      },
+      tokens: {
+        accessToken,
+        refreshToken,
+      },
+    }
   }
 }

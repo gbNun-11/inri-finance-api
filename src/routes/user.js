@@ -6,16 +6,12 @@ const router = new Router()
 const userController = makeGetUserController()
 
 // Routes
-router.get('/:userId/balance', authMiddleware, (req, res) =>
+router.get('/balance', authMiddleware, (req, res) =>
   userController.index(req, res),
 )
-router.get('/:userId', authMiddleware, (req, res) =>
-  userController.show(req, res),
-)
-router.patch('/:userId', authMiddleware, (req, res) =>
-  userController.update(req, res),
-)
-router.delete('/:userId', authMiddleware, (req, res) =>
+router.get('/', authMiddleware, (req, res) => userController.show(req, res))
+router.patch('/', authMiddleware, (req, res) => userController.update(req, res))
+router.delete('/', authMiddleware, (req, res) =>
   userController.delete(req, res),
 )
 router.post('/', (req, res) => userController.store(req, res))

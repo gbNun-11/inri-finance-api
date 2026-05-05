@@ -1,3 +1,5 @@
+import { UserNotFoundError, InvalidPasswordError } from '../errors/user.js'
+
 export class AuthController {
   constructor(loginUserUseCase, getUserHelper) {
     this.loginUserUseCase = loginUserUseCase
@@ -8,45 +10,15 @@ export class AuthController {
     try {
       const params = req.body
 
-      const requiredFields = this.getUserHelper.columnsTableLoginUsers()
+      const validationError = this.validateLoginParams(params)
 
-      const someFieldIsNotAllowed = Object.keys(params).some(
-        (field) => !requiredFields.includes(field),
-      )
-
-      if (someFieldIsNotAllowed) {
+      if (validationError) {
         return this.getUserHelper.responseStatusError(
           res,
-          400,
-          'Some provided field is not allowed',
+          validationError.statusCode,
+          validationError.message,
         )
       }
-
-      const someRequiredFieldIsMissing = requiredFields.some(
-        (field) => !params[field],
-      )
-
-      if (someRequiredFieldIsMissing) {
-        return this.getUserHelper.responseStatusError(
-          res,
-          400,
-          'Missing required fields',
-        )
-      }
-
-      const isValidationEmail = this.getUserHelper.validationEmail(
-        res,
-        params.email,
-      )
-
-      if (!isValidationEmail) return
-
-      const isValidationPassword = this.getUserHelper.validationPassword(
-        res,
-        params.password,
-      )
-
-      if (!isValidationPassword) return
 
       const user = await this.loginUserUseCase.execute(
         params.email,
@@ -54,8 +26,19 @@ export class AuthController {
       )
 
       return this.getUserHelper.responseStatusSuccess(res, 200, user)
-    } catch (e) {
-      console.error(e)
+    } catch (error) {
+      if (
+        error instanceof UserNotFoundError ||
+        error instanceof InvalidPasswordError
+      ) {
+        return this.getUserHelper.responseStatusError(
+          res,
+          401,
+          'Invalid email or password',
+        )
+      }
+
+      console.error(error)
 
       return this.getUserHelper.responseStatusError(
         res,
@@ -63,5 +46,33 @@ export class AuthController {
         'Internal server error.',
       )
     }
+  }
+
+  validateLoginParams(params) {
+    const requiredFields = this.getUserHelper.columnsTableLoginUsers()
+
+    const someFieldIsNotAllowed = Object.keys(params).some(
+      (field) => !requiredFields.includes(field),
+    )
+
+    if (someFieldIsNotAllowed) {
+      return {
+        statusCode: 400,
+        message: 'Some provided field is not allowed',
+      }
+    }
+
+    const someRequiredFieldIsMissing = requiredFields.some(
+      (field) => !params[field],
+    )
+
+    if (someRequiredFieldIsMissing) {
+      return {
+        statusCode: 400,
+        message: 'Missing required fields',
+      }
+    }
+
+    return null
   }
 }

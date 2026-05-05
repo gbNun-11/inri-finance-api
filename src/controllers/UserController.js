@@ -16,7 +16,7 @@ export class UserController {
   }
   async show(req, res) {
     try {
-      const userId = req.params.userId
+      const userId = req.userId
 
       const user = await this.getUserHelper.validationUserId(res, userId)
       if (!user) return
@@ -34,7 +34,7 @@ export class UserController {
 
   async index(req, res) {
     try {
-      const userId = req.params.userId
+      const userId = req.userId
 
       const user = await this.getUserHelper.validationUserId(res, userId)
       if (!user) return
@@ -57,7 +57,7 @@ export class UserController {
       const fieldsBody = this.getUserHelper.validateFieldsNull(res, params)
 
       if (!fieldsBody) return
-      const userId = req.params.userId
+      const userId = req.userId
 
       const user = await this.getUserHelper.validationUserId(res, userId)
       if (!user) return
@@ -148,7 +148,7 @@ export class UserController {
 
   async delete(req, res) {
     try {
-      const userId = req.params.userId
+      const userId = req.userId
 
       const user = await this.getUserHelper.validationUserId(res, userId)
       if (!user) return
