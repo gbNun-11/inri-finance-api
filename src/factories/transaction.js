@@ -53,12 +53,14 @@ export const makeGetTransactionController = () => {
   )
   const updateTransactionUseCase = new UpdateTransactionUseCase(
     postgresUpdateTransactionRepository,
+    postgresGetTransactionByIdRepository,
   )
   const getTransactionByIdUseCase = new GetTransactionByIdUseCase(
     postgresGetTransactionByIdRepository,
   )
   const deleteTransactionUseCase = new DeleteTransactionUseCase(
     postgresDeleteTransactionRepository,
+    postgresGetTransactionByIdRepository,
   )
 
   // Helpers

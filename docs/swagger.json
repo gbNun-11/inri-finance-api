@@ -309,7 +309,7 @@
                   "missingUserId": {
                     "summary": "Missing user ID",
                     "value": {
-                      "errorMessage": "Missing param: user_id"
+                      "errorMessage": "Missing param: userId"
                     }
                   },
                   "invalidUserId": {
@@ -736,9 +736,9 @@
       },
       "CreateTransactionRequest": {
         "type": "object",
-        "required": ["user_id", "name", "date", "amount", "type"],
+        "required": ["userId", "name", "date", "amount", "type"],
         "properties": {
-          "user_id": {
+          "userId": {
             "type": "string",
             "format": "uuid",
             "example": "74f0e35a-68d0-4493-a901-1ec03517cd6a"
@@ -796,7 +796,7 @@
             "format": "uuid",
             "example": "ecf6e6c2-13dc-4e84-85a4-4c93b0e0802a"
           },
-          "user_id": {
+          "userId": {
             "type": "string",
             "format": "uuid",
             "example": "74f0e35a-68d0-4493-a901-1ec03517cd6a"

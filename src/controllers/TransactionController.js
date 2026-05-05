@@ -1,3 +1,5 @@
+import { ForbiddenError } from '../errors/user.js'
+
 export class TransactionController {
   constructor(
     getUserHelper,
@@ -15,7 +17,7 @@ export class TransactionController {
 
   async show(req, res) {
     try {
-      const userId = req.query.userId
+      const userId = req.userId
 
       const user = await this.getUserHelper.validationUserId(res, userId)
       if (!user) return
@@ -38,6 +40,7 @@ export class TransactionController {
   async update(req, res) {
     try {
       const params = req.body
+      const userId = req.userId
       const fieldsBody = this.getUserHelper.validateFieldsNull(res, params)
 
       if (!fieldsBody) return
@@ -85,6 +88,7 @@ export class TransactionController {
 
       const updatedTransaction = await this.updateTransactionUseCase.execute(
         transactionId,
+        userId,
         params,
       )
 
@@ -94,6 +98,9 @@ export class TransactionController {
         updatedTransaction,
       )
     } catch (e) {
+      if (e instanceof ForbiddenError) {
+        return this.getUserHelper.responseStatusError(res, 403, e.message)
+      }
       console.error(e)
       return this.getUserHelper.responseStatusError(
         res,
@@ -106,7 +113,7 @@ export class TransactionController {
   async store(req, res) {
     try {
       const params = req.body
-      const userId = params.user_id
+      const userId = req.userId
 
       const requiredFields = this.getUserHelper.columnsTableTransaction()
 
@@ -156,6 +163,7 @@ export class TransactionController {
   async delete(req, res) {
     try {
       const transactionId = req.params.transactionId
+      const userId = req.userId
 
       const transaction = await this.getUserHelper.validationTransactionId(
         res,
@@ -163,8 +171,10 @@ export class TransactionController {
       )
       if (!transaction) return
 
-      const deletedTransaction =
-        await this.deleteTransactionUseCase.execute(transactionId)
+      const deletedTransaction = await this.deleteTransactionUseCase.execute(
+        transactionId,
+        userId,
+      )
 
       return this.getUserHelper.responseStatusSuccess(
         res,
@@ -172,6 +182,9 @@ export class TransactionController {
         deletedTransaction,
       )
     } catch (e) {
+      if (e instanceof ForbiddenError) {
+        return this.getUserHelper.responseStatusError(res, 403, e.message)
+      }
       console.error(e)
       return this.getUserHelper.responseStatusError(
         res,
