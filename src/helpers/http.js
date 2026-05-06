@@ -36,6 +36,25 @@ export class GetUserHelper {
     return res.status(code).json(data)
   }
 
+  validationDate(res, date) {
+    if (typeof date !== 'string' || date.trim() === '') {
+      this.responseStatusError(res, 400, 'Date query is required')
+      return false
+    }
+
+    const isValidDate = validator.isDate(date, {
+      format: 'YYYY-MM-DD',
+      strictMode: true,
+    })
+
+    if (!isValidDate) {
+      this.responseStatusError(res, 400, 'Date must be in format YYYY-MM-DD')
+      return false
+    }
+
+    return true
+  }
+
   validationEmail(res, email) {
     if (typeof email !== 'string' || email.trim() === '') {
       this.responseStatusError(

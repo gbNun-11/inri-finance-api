@@ -18,12 +18,30 @@ export class TransactionController {
   async show(req, res) {
     try {
       const userId = req.userId
+      const { from, to } = req.query.from
 
-      const user = await this.getUserHelper.validationUserId(res, userId)
-      if (!user) return
+      if (from) {
+        const isValidFromDate = this.getUserHelper.validationDate(res, from)
+        if (!isValidFromDate) return
+      }
+
+      if (to) {
+        const isValidToDate = this.getUserHelper.validationDate(res, to)
+        if (!isValidToDate) return
+      }
+
+      if (from && to && new Date(from) > new Date(to)) {
+        return this.getUserHelper.responseStatusError(
+          res,
+          400,
+          '"from" date cannot be greater than "to" date',
+        )
+      }
 
       const transactions = await this.getTransactionByUserIdUseCase.execute({
         userId,
+        from,
+        to,
       })
 
       return this.getUserHelper.responseStatusSuccess(res, 200, transactions)

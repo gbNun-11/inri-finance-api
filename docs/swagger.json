@@ -3,12 +3,16 @@
   "info": {
     "title": "INRI Finance API",
     "description": "API for INRI Finance documentation",
-    "version": "1.0.0"
+    "version": "1.0.1"
   },
   "servers": [
     {
       "url": "http://localhost:8030/api",
       "description": "Local server"
+    },
+    {
+      "url": "https://inrifinance-api.onrender.com/api",
+      "description": "Production server"
     }
   ],
   "paths": {
