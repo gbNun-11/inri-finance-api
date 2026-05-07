@@ -194,6 +194,30 @@
       "get": {
         "summary": "Get authenticated user balance",
         "tags": ["Users"],
+        "parameters": [
+          {
+            "name": "from",
+            "in": "query",
+            "required": false,
+            "description": "Optional start date to filter transactions from a specific date (format: YYYY-MM-DD)",
+            "schema": {
+              "type": "string",
+              "format": "date"
+            },
+            "example": "2026-04-01"
+          },
+          {
+            "name": "to",
+            "in": "query",
+            "required": false,
+            "description": "Optional end date to filter transactions up to a specific date (format: YYYY-MM-DD)",
+            "schema": {
+              "type": "string",
+              "format": "date"
+            },
+            "example": "2026-04-30"
+          }
+        ],
         "security": [
           {
             "bearerAuth": []
