@@ -117,7 +117,9 @@
             }
           }
         }
-      },
+      }
+    },
+    "/users/me": {
       "get": {
         "summary": "Get authenticated user",
         "tags": ["Users"],
@@ -190,7 +192,7 @@
         }
       }
     },
-    "/users/balance": {
+    "/users/me/balance": {
       "get": {
         "summary": "Get authenticated user balance",
         "tags": ["Users"],
@@ -413,9 +415,9 @@
         }
       }
     },
-    "/transactions": {
+    "/transactions/me": {
       "post": {
-        "summary": "Create a new transaction",
+        "summary": "Create a new transaction for the authenticated user",
         "tags": ["Transactions"],
         "security": [
           {
@@ -636,7 +638,7 @@
         }
       }
     },
-    "/transactions/{transactionId}": {
+    "/transactions/me/{transactionId}": {
       "patch": {
         "summary": "Update authenticated user transaction",
         "tags": ["Transactions"],

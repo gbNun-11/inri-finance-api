@@ -5,16 +5,16 @@ import { authMiddleware } from '../middlewares/auth.js'
 const router = new Router()
 const transactionController = makeGetTransactionController()
 
-router.get('/', authMiddleware, (req, res) =>
+router.get('/me', authMiddleware, (req, res) =>
   transactionController.show(req, res),
 )
-router.post('/', authMiddleware, (req, res) =>
+router.post('/me', authMiddleware, (req, res) =>
   transactionController.store(req, res),
 )
-router.patch('/:transactionId', authMiddleware, (req, res) =>
+router.patch('/me/:transactionId', authMiddleware, (req, res) =>
   transactionController.update(req, res),
 )
-router.delete('/:transactionId', authMiddleware, (req, res) =>
+router.delete('/me/:transactionId', authMiddleware, (req, res) =>
   transactionController.delete(req, res),
 )
 

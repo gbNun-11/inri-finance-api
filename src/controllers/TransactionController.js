@@ -160,8 +160,10 @@ export class TransactionController {
         params.type = isValidType
       }
 
-      const createdTransaction =
-        await this.createTransactionUseCase.execute(params)
+      const createdTransaction = await this.createTransactionUseCase.execute(
+        params,
+        userId,
+      )
 
       return this.getUserHelper.responseStatusSuccess(
         res,

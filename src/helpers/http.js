@@ -15,7 +15,7 @@ export class GetUserHelper {
   }
 
   columnsTableTransaction() {
-    return ['userId', 'name', 'date', 'amount', 'type']
+    return ['name', 'date', 'amount', 'type']
   }
 
   columnsTableTransactionUpdate() {

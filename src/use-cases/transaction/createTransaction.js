@@ -4,11 +4,12 @@ export class CreateTransactionUseCase {
       postgresCreateTransactionRepository
     this.uuidAdapter = UuidAdapter
   }
-  async execute(createTransactionParams) {
+  async execute(createTransactionParams, userId) {
     const transactionId = this.uuidAdapter.generate()
     const transaction = await this.postgresCreateTransactionRepository.execute({
       ...createTransactionParams,
       id: transactionId,
+      userId,
     })
 
     return transaction
