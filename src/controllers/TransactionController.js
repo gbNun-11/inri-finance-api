@@ -18,7 +18,7 @@ export class TransactionController {
   async show(req, res) {
     try {
       const userId = req.userId
-      const { from, to } = req.query.from
+      const { from, to } = req.query
 
       if (from) {
         const isValidFromDate = this.getUserHelper.validationDate(res, from)

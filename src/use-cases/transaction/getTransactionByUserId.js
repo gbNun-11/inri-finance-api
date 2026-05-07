@@ -3,9 +3,13 @@ export class GetTransactionByUserIdUseCase {
     this.postgresGetTransactionByUserIdRepository =
       postgresGetTransactionByUserIdRepository
   }
-  async execute(params) {
+  async execute({ userId, from, to }) {
     const transactions =
-      await this.postgresGetTransactionByUserIdRepository.execute(params.userId)
+      await this.postgresGetTransactionByUserIdRepository.execute(
+        userId,
+        from,
+        to,
+      )
 
     return transactions
   }
