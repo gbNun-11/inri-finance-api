@@ -230,13 +230,6 @@
               "application/json": {
                 "schema": {
                   "$ref": "#/components/schemas/UserBalance"
-                },
-                "example": {
-                  "userId": "2e4d4d19-67e8-479a-b109-994bf5433d26",
-                  "earning": "3900.00",
-                  "expense": "1200.00",
-                  "investment": "1500.00",
-                  "balance": "1200.00"
                 }
               }
             }
@@ -930,7 +923,7 @@
           },
           "expense": {
             "type": "string",
-            "example": "1200.00"
+            "example": "1400.00"
           },
           "investment": {
             "type": "string",
@@ -938,7 +931,19 @@
           },
           "balance": {
             "type": "string",
-            "example": "1200.00"
+            "example": "1000.00"
+          },
+          "earning_percentage": {
+            "type": "string",
+            "example": "57.35"
+          },
+          "expense_percentage": {
+            "type": "string",
+            "example": "20.58"
+          },
+          "investment_percentage": {
+            "type": "string",
+            "example": "22.05"
           }
         }
       },
