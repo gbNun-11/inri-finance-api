@@ -1,23 +1,58 @@
 import { PostgresHelper } from '../../../database/postgres/client.js'
 
 export class PostgresGetUserBalanceRepository {
-  async execute(userId) {
-    const balanceUser = await PostgresHelper.query(
-      `
-        SELECT 
-          SUM(CASE WHEN type = 'EARNING' THEN amount ELSE 0 END) as EARNING,
-          SUM(CASE WHEN type = 'EXPENSE' THEN amount ELSE 0 END) as EXPENSE,
-          SUM(CASE WHEN type = 'INVESTMENT' THEN amount ELSE 0 END) as INVESTMENT,
-          (
-            SUM(CASE WHEN type = 'EARNING' THEN amount ELSE 0 END)
-            - SUM(CASE WHEN type = 'EXPENSE' THEN amount ELSE 0 END)
-            - SUM(CASE WHEN type = 'INVESTMENT' THEN amount ELSE 0 END)
-          ) AS BALANCE
-          FROM transactions
-          WHERE user_id = $1;
-      `,
-      [userId],
-    )
+  async execute(userId, from, to) {
+    let query = `
+      SELECT 
+        COALESCE(
+          SUM(CASE WHEN type = 'EARNING' THEN amount ELSE 0 END),
+          0
+        ) AS earning,
+
+        COALESCE(
+          SUM(CASE WHEN type = 'EXPENSE' THEN amount ELSE 0 END),
+          0
+        ) AS expense,
+
+        COALESCE(
+          SUM(CASE WHEN type = 'INVESTMENT' THEN amount ELSE 0 END),
+          0
+        ) AS investment,
+
+        (
+          COALESCE(
+            SUM(CASE WHEN type = 'EARNING' THEN amount ELSE 0 END),
+            0
+          )
+          -
+          COALESCE(
+            SUM(CASE WHEN type = 'EXPENSE' THEN amount ELSE 0 END),
+            0
+          )
+          -
+          COALESCE(
+            SUM(CASE WHEN type = 'INVESTMENT' THEN amount ELSE 0 END),
+            0
+          )
+        ) AS balance
+
+      FROM transactions
+      WHERE user_id = $1
+    `
+
+    const values = [userId]
+
+    if (from) {
+      query += ` AND transaction_date >= $${values.length + 1}`
+      values.push(from)
+    }
+
+    if (to) {
+      query += ` AND transaction_date <= $${values.length + 1}`
+      values.push(to)
+    }
+
+    const balanceUser = await PostgresHelper.query(query, values)
 
     return {
       userId,

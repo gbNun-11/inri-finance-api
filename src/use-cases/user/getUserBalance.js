@@ -3,9 +3,12 @@ export class GetUserBalanceUseCase {
     this.postgresGetUserBalanceRepository = postgresGetUserBalanceRepository
   }
 
-  async execute(userId) {
-    const balanceUser =
-      await this.postgresGetUserBalanceRepository.execute(userId)
+  async execute({ userId, from, to }) {
+    const balanceUser = await this.postgresGetUserBalanceRepository.execute(
+      userId,
+      from,
+      to,
+    )
     return balanceUser
   }
 }
