@@ -511,6 +511,30 @@
       "get": {
         "summary": "Get authenticated user transactions",
         "tags": ["Transactions"],
+        "parameters": [
+          {
+            "name": "from",
+            "in": "query",
+            "required": false,
+            "description": "Optional start date to filter transactions from a specific date (format: YYYY-MM-DD)",
+            "schema": {
+              "type": "string",
+              "format": "date"
+            },
+            "example": "2026-04-01"
+          },
+          {
+            "name": "to",
+            "in": "query",
+            "required": false,
+            "description": "Optional end date to filter transactions up to a specific date (format: YYYY-MM-DD)",
+            "schema": {
+              "type": "string",
+              "format": "date"
+            },
+            "example": "2026-04-30"
+          }
+        ],
         "security": [
           {
             "bearerAuth": []
@@ -531,7 +555,7 @@
             }
           },
           "400": {
-            "description": "Invalid user ID",
+            "description": "Invalid transaction",
             "content": {
               "application/json": {
                 "schema": {
@@ -548,6 +572,18 @@
                     "summary": "Invalid user ID",
                     "value": {
                       "errorMessage": "User ID is not valid"
+                    }
+                  },
+                  "invalidFromDate": {
+                    "summary": "Invalid from date",
+                    "value": {
+                      "errorMessage": "Invalid from date. Use format YYYY-MM-DD"
+                    }
+                  },
+                  "invalidToDate": {
+                    "summary": "Invalid to date",
+                    "value": {
+                      "errorMessage": "Invalid to date. Use format YYYY-MM-DD"
                     }
                   }
                 }
